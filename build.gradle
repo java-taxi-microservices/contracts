@@ -55,7 +55,7 @@ subprojects {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/java-taxi-microservices/java-taxi-contracts")
+                url = uri("https://maven.pkg.github.com/java-taxi-microservices/contracts")
 
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
