@@ -33,7 +33,11 @@ jobs:
         id: detect
         shell: bash
         run: |
-          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            changed_files=$(git ls-tree -r --name-only HEAD)
+          else
+            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          fi
 
           echo "$changed_files"
 
