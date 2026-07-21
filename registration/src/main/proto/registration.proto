@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package registration.v1;
+
+option java_package = "com.taxi.microservices.contracts.registration.v1";
+option java_multiple_files = true;
+
+service RegistrationService {
+
+  rpc RegisterByPhone(RegistrationByPhoneRequest)
+      returns (RegistrationResponse);
+
+  rpc RegisterByEmail(RegistrationByEmailRequest)
+      returns (RegistrationResponse);
+}
+
+
+message RegistrationByPhoneRequest {
+  string phone_number = 1;
+  UserType user_type = 2;
+}
+
+message RegistrationByEmailRequest {
+  string email = 1;
+  UserType user_type = 2;
+}
+
+message RegistrationResponse {
+  string registration_session_id = 1;
+}
+
+enum UserType {
+  USER_TYPE_UNSPECIFIED = 0;
+  PASSENGER = 1;
+  DRIVER = 2;
+}

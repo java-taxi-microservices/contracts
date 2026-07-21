@@ -1,0 +1,77 @@
+name: Publish Contracts
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      modules: ${{ steps.detect.outputs.modules }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: "25"
+          distribution: temurin
+          cache: gradle
+
+      - name: Detect modules
+        id: detect
+        shell: bash
+        run: |
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+          echo "$changed_files"
+
+          if echo "$changed_files" | grep -qE '^(build.gradle|settings.gradle|gradle.properties|gradle/)'; then
+            modules=$(./gradlew -q listModules | jq -R -c 'split(",")')
+          else
+            modules=$(echo "$changed_files" \
+              | awk -F/ '{print $1}' \
+              | sort -u \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          fi
+
+          echo "modules=$modules" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: detect-changes
+
+    if: needs.detect-changes.outputs.modules != '[]'
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.detect-changes.outputs.modules) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: "25"
+          distribution: temurin
+          cache: gradle
+
+      - name: Publish
+        run: ./gradlew :${{ matrix.module }}:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}

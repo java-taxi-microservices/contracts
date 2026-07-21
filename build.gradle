@@ -1,0 +1,86 @@
+plugins {
+    id "com.google.protobuf" version "0.9.5" apply false
+}
+
+allprojects {
+    group = "com.taxi.microservices.contracts"
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: "java-library"
+    apply plugin: "maven-publish"
+    apply plugin: "com.google.protobuf"
+
+    dependencies {
+        api "io.grpc:grpc-protobuf:1.76.0"
+        api "io.grpc:grpc-stub:1.76.0"
+        api "com.google.protobuf:protobuf-java:4.32.0"
+
+        compileOnly "org.apache.tomcat:annotations-api:6.0.53"
+
+        testImplementation platform("org.junit:junit-bom:6.0.0")
+        testImplementation "org.junit.jupiter:junit-jupiter"
+        testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    }
+
+    protobuf {
+        protoc {
+            artifact = "com.google.protobuf:protoc:4.32.0"
+        }
+
+        plugins {
+            grpc {
+                artifact = "io.grpc:protoc-gen-grpc-java:1.76.0"
+            }
+        }
+
+        generateProtoTasks {
+            all().configureEach {
+                plugins {
+                    grpc {}
+                }
+            }
+        }
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/java-taxi-microservices/java-taxi-contracts")
+
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+
+        publications {
+            maven(MavenPublication) {
+                from components.java
+                artifactId = project.name
+            }
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+tasks.register("listModules") {
+    doLast {
+        println(
+                subprojects.collect { it.name }.join(",")
+        )
+    }
+}
