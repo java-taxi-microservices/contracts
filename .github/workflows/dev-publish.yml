@@ -39,6 +39,7 @@ jobs:
             changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           fi
 
+          echo "Changed files:"
           echo "$changed_files"
 
           if echo "$changed_files" | grep -qE '^(build.gradle|settings.gradle|gradle.properties|gradle/)'; then
@@ -46,10 +47,12 @@ jobs:
           else
             all_modules=$(./gradlew -q listModules | tr ',' '\n')
 
-            modules=$(echo "$changed_files" \
+            changed_modules=$(echo "$changed_files" \
               | awk -F/ '{print $1}' \
               | sort -u \
-              | grep -Fxf <(echo "$all_modules") \
+              | grep -Fxf <(echo "$all_modules") || true)
+
+            modules=$(echo "$changed_modules" \
               | jq -R -s -c 'split("\n") | map(select(length > 0))')
           fi
 
