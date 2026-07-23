@@ -83,8 +83,45 @@ jobs:
           distribution: temurin
           cache: gradle
 
+      - name: Check if version already exists
+        id: check
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          MODULE="${{ matrix.module }}"
+
+          VERSION=$(./gradlew -q :$MODULE:properties \
+            | grep "^version:" \
+            | awk '{print $2}')
+
+          echo "Detected version: $VERSION"
+
+          URL="https://maven.pkg.github.com/java-taxi-microservices/contracts/com/taxi/microservices/contracts/$MODULE/$VERSION/$MODULE-$VERSION.pom"
+
+          STATUS=$(curl \
+            -s \
+            -o /dev/null \
+            -w "%{http_code}" \
+            -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+            "$URL")
+
+          if [ "$STATUS" = "200" ]; then
+            echo "Artifact already exists. Skipping publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Artifact does not exist."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish
+        if: steps.check.outputs.skip == 'false'
         run: ./gradlew :${{ matrix.module }}:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
+
+      - name: Skip publish
+        if: steps.check.outputs.skip == 'true'
+        run: echo "Skipping ${{ matrix.module }} because this version already exists."
