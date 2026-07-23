@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package user.v1;
+
+option java_package = "com.taxi.microservices.contracts.user.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc CreateDraftUser(CreateDraftUserRequest)
+      returns (CreateDraftUserResponse);
+
+  rpc DeleteDraftUser(DeleteDraftUserRequest)
+      returns (google.protobuf.Empty);
+}
+
+message CreateDraftUserRequest {}
+
+message CreateDraftUserResponse {
+  string user_id = 1;
+}
+
+message DeleteDraftUserRequest {
+  string user_id = 1;
+}
