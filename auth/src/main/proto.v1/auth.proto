@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option java_package = "com.taxi.microservices.contracts.auth.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/empty.proto";
+
+
+service AuthService {
+  rpc CreateDraftPhoneAuthData(CreateDraftPhoneAuthDataRequest)
+      returns (google.protobuf.Empty);
+
+  rpc CreateDraftEmailAuthData(CreateDraftEmailAuthDataRequest)
+      returns (google.protobuf.Empty);
+
+  rpc DeleteDraftAuthData(DeleteDraftAuthDataRequest)
+      returns (google.protobuf.Empty);
+
+  rpc GenerateOtp(GenerateOtpRequest)
+      returns (google.protobuf.Empty);
+
+  rpc ConfirmOtp(ConfirmOtpRequest)
+      returns (google.protobuf.Empty);
+}
+
+message CreateDraftPhoneAuthDataRequest {
+  string user_id = 1;
+}
+
+message CreateDraftEmailAuthDataRequest {
+  string user_id = 1;
+}
+
+message DeleteDraftAuthDataRequest {
+  string auth_id = 1;
+}
+
+message GenerateOtpRequest {
+  string auth_id = 1;
+}
+
+message ConfirmOtpRequest {
+  string auth_id = 1;
+  string otp = 2;
+}

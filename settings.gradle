@@ -2,5 +2,6 @@ rootProject.name = 'java-taxi-contracts'
 
 include(
         "registration",
-        "user"
+        "user",
+        "auth"
 )
