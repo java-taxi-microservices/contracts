@@ -10,10 +10,10 @@ import "google/protobuf/empty.proto";
 
 service AuthService {
   rpc CreateDraftPhoneCredential(CreateDraftPhoneCredentialRequest)
-      returns (google.protobuf.Empty);
+      returns (CreateDraftPhoneCredentialResponse);
 
   rpc CreateDraftEmailCredential(CreateDraftEmailCredentialRequest)
-      returns (google.protobuf.Empty);
+      returns (CreateDraftEmailCredentialResponse);
 
   rpc DeleteDraftCredential(DeleteDraftCredentialRequest)
       returns (google.protobuf.Empty);
@@ -30,9 +30,17 @@ message CreateDraftPhoneCredentialRequest {
   string phone_number = 2;
 }
 
+message CreateDraftPhoneCredentialResponse {
+  string credential_id = 1;
+}
+
 message CreateDraftEmailCredentialRequest {
   string user_id = 1;
   string email = 2;
+}
+
+message CreateDraftEmailCredentialResponse {
+  string credential_id = 1;
 }
 
 message DeleteDraftCredentialRequest {
