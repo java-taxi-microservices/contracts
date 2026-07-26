@@ -45,21 +45,13 @@ jobs:
           if echo "$changed_files" | grep -qE '^(build.gradle|gradle.properties|gradle/)'; then
             modules=$(./gradlew -q listModules | jq -R -c 'split(",")')
           else
-          else
             all_modules=$(./gradlew -q listModules | tr ',' '\n')
-
-            changed_modules=$(echo "$changed_files" \
-              | awk -F/ '{print $1}' \
-              | sort -u \
-              | grep -Fxf <(echo "$all_modules") || true)
-
-            modules=$(echo "$changed_modules" \
-              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            changed_modules=$(echo "$changed_files" | awk -F/ '{print $1}' | sort -u | grep -Fxf <(echo "$all_modules") || true)
+            modules=$(echo "$changed_modules" | jq -R -s -c 'split("\n") | map(select(length > 0))')
           fi
 
           echo "Modules to publish:"
           echo "$modules"
-
           echo "modules=$modules" >> "$GITHUB_OUTPUT"
 
   publish:
