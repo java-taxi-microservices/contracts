@@ -42,8 +42,9 @@ jobs:
           echo "Changed files:"
           echo "$changed_files"
 
-          if echo "$changed_files" | grep -qE '^(build.gradle|settings.gradle|gradle.properties|gradle/)'; then
+          if echo "$changed_files" | grep -qE '^(build.gradle|gradle.properties|gradle/)'; then
             modules=$(./gradlew -q listModules | jq -R -c 'split(",")')
+          else
           else
             all_modules=$(./gradlew -q listModules | tr ',' '\n')
 
@@ -98,7 +99,7 @@ jobs:
 
           echo "Detected version: $VERSION"
 
-          URL="https://maven.pkg.github.com/java-taxi-microservices/contracts/com/taxi/microservices/contracts/$MODULE/$VERSION/$MODULE-$VERSION.pom"
+          URL="https://maven.pkg.github.com/java-taxi-microservices/contracts/com/taxi/microservices/contracts/$MODULE/$VERSION/$MODULE-$VERSION.jar"
 
           STATUS=$(curl \
             -s \
