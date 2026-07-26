@@ -9,13 +9,13 @@ import "google/protobuf/empty.proto";
 
 
 service AuthService {
-  rpc CreateDraftPhoneAuthData(CreateDraftPhoneAuthDataRequest)
+  rpc CreateDraftPhoneCredential(CreateDraftPhoneCredentialRequest)
       returns (google.protobuf.Empty);
 
-  rpc CreateDraftEmailAuthData(CreateDraftEmailAuthDataRequest)
+  rpc CreateDraftEmailCredential(CreateDraftEmailCredentialRequest)
       returns (google.protobuf.Empty);
 
-  rpc DeleteDraftAuthData(DeleteDraftAuthDataRequest)
+  rpc DeleteDraftCredential(DeleteDraftCredentialRequest)
       returns (google.protobuf.Empty);
 
   rpc GenerateOtp(GenerateOtpRequest)
@@ -25,15 +25,15 @@ service AuthService {
       returns (google.protobuf.Empty);
 }
 
-message CreateDraftPhoneAuthDataRequest {
+message CreateDraftPhoneCredentialRequest {
   string user_id = 1;
 }
 
-message CreateDraftEmailAuthDataRequest {
+message CreateDraftEmailCredentialRequest {
   string user_id = 1;
 }
 
-message DeleteDraftAuthDataRequest {
+message DeleteDraftCredentialRequest {
   string auth_id = 1;
 }
 
