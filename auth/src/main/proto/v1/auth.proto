@@ -36,14 +36,14 @@ message CreateDraftEmailCredentialRequest {
 }
 
 message DeleteDraftCredentialRequest {
-  string auth_id = 1;
+  string credential_id = 1;
 }
 
 message GenerateOtpRequest {
-  string auth_id = 1;
+  string credential_id = 1;
 }
 
 message ConfirmOtpRequest {
-  string auth_id = 1;
+  string credential_id = 1;
   string otp = 2;
 }
