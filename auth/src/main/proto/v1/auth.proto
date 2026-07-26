@@ -27,10 +27,12 @@ service AuthService {
 
 message CreateDraftPhoneCredentialRequest {
   string user_id = 1;
+  string phone_number = 2;
 }
 
 message CreateDraftEmailCredentialRequest {
   string user_id = 1;
+  string email = 2;
 }
 
 message DeleteDraftCredentialRequest {
