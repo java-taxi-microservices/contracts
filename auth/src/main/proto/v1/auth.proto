@@ -19,7 +19,7 @@ service AuthService {
       returns (google.protobuf.Empty);
 
   rpc GenerateOtp(GenerateOtpRequest)
-      returns (google.protobuf.Empty);
+      returns (GenerateOtpResponse);
 
   rpc ConfirmOtp(ConfirmOtpRequest)
       returns (google.protobuf.Empty);
@@ -52,6 +52,10 @@ message GenerateOtpRequest {
 }
 
 message ConfirmOtpRequest {
-  string credential_id = 1;
+  string otp_id = 1;
   string otp = 2;
+}
+
+message GenerateOtpResponse {
+  string otp_id = 1;
 }
